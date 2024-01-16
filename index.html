@@ -7,6 +7,18 @@
       <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
       <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
       <style>
+        .game-container{
+            margin:auto;
+            background-color: #bbada0;
+            min-width: 500px;
+            min-height: 500px;
+            width: 30vw; 
+            height: 30vw; 
+            display: grid; 
+            border: solid 3px rgb(144, 126, 102);
+            border-radius: 3%;
+        }
+
         .tile-container{
             width: 25%;
             height: 25%;
@@ -45,12 +57,13 @@
             animation-name: test;
             animation-duration: 0.4s;    
         }
+        
       </style>
   </head>
   <body py-keydown="keypress" style="font-family: Arial, Helvetica, sans-serif;">
 
     <h2 id="score" style="text-align: center;">Score: 0</h2>
-    <div id="game" style="margin: auto; background-color: #bbada0; width: 30vw; height: 30vw; display: grid; border: solid 3px rgb(144, 126, 102);border-radius: 3%;">
+    <div id="game" class="game-container">
         <div class="tile-label">Loading PyScript...</div>
     </div>
     <script type="py" src="./main.py"></script>
