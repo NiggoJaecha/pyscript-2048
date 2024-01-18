@@ -7,7 +7,7 @@ LEFT=37
 RIGHT=39
 UP=38
 DOWN=40
-
+SHOW_OVERLAY = False
 DID_MOVE = False
 SCORE = 0
 
@@ -45,6 +45,17 @@ Tiles = {
     2:{0:None,1:None,2:None,3:None},
     3:{0:None,1:None,2:None,3:None}
     }
+
+def toggleOverlay(state):
+    global SHOW_OVERLAY, SCORE
+    SHOW_OVERLAY = state
+    if SHOW_OVERLAY:
+        pydom["#overlay"][0].style["display"] = "block"
+        text = pydom["#overlay-text"][0]
+        text.html = f"Your current score is {SCORE}"
+        text.style["color"] = "black"
+    else:
+        pydom["#overlay"][0].style["display"] = "none"
 
 def getTranform(x, y):
     return f"translate({x}00%,{y}00%)"
@@ -88,6 +99,14 @@ def deleteTile(x,y):
     Tile[0].id = ""
     Tiles[x][y] = None
 
+    
+def showWin():
+    global SCORE
+    toggleOverlay(True)
+    text = pydom["#overlay-text"][0]
+    text.html = f"You win! Score: {SCORE}! You can continue to further increase your score."
+    text.style["color"] = "gold"
+
 def doubleTile(x,y):
     global SCORE
     Tile = Tiles[x][y]
@@ -105,6 +124,8 @@ def doubleTile(x,y):
     Label.html = Tile[1]
     SCORE += Tile[1]
     pydom["#score"][0].html = f"Score: {SCORE}"
+    if Tile[1] == 2048:
+        showWin()
 
 def moveUp():
     for x in range(4):
@@ -200,9 +221,16 @@ def LogTiles():
     window.console.log(f"{Tiles[0][2]}|{Tiles[1][2]}|{Tiles[2][2]}|{Tiles[3][2]}")
     window.console.log(f"{Tiles[0][3]}|{Tiles[1][3]}|{Tiles[2][3]}|{Tiles[3][3]}")
 
+
+
 def keypress(e):
-    global DID_MOVE
+    global DID_MOVE, SHOW_OVERLAY
     kc = e.keyCode
+
+    if kc == 27:
+        toggleOverlay(not SHOW_OVERLAY)
+        return
+
     if kc not in [LEFT,RIGHT,UP,DOWN]:
         return
     DID_MOVE = False
@@ -229,6 +257,19 @@ def keypress(e):
         moveDown()
     if DID_MOVE:
         spawnTile()
+
+def game_continue(e):
+    toggleOverlay(False)
+
+def game_restart(e):
+    global Tiles, SCORE
+    for x in range(4):
+        for y in range(4):
+            if (Tiles[x][y] is not None):
+                deleteTile(x,y)
+    SCORE = 0
+    spawnTile()
+    toggleOverlay(False)
 
 window.console.log("Game Start")
 spawnTile()
